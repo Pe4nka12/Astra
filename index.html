@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f7fb">
+  <meta name="description" content="Astra — настраиваемый интерфейс для общения с ИИ.">
+  <title>Astra — AI Chat</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell" id="appShell">
+    <aside class="sidebar" id="sidebar" aria-label="История чатов">
+      <div class="sidebar-head">
+        <a class="brand" href="#" aria-label="Astra — главная">
+          <span class="brand-mark"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2.8 19.6 12.4 29.2 16 19.6 19.6 16 29.2 12.4 19.6 2.8 16 12.4 12.4 16 2.8Z"/><circle cx="16" cy="16" r="3.1"/></svg></span>
+          <span>Astra</span>
+        </a>
+        <button class="icon-btn mobile-only" id="closeSidebarBtn" aria-label="Закрыть меню" title="Закрыть меню"><svg viewBox="0 0 24 24"><path d="m18 6-12 12M6 6l12 12"/></svg></button>
+      </div>
+      <button class="new-chat-btn" id="newChatBtn"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span>Новый чат</span><kbd>⌘ K</kbd></button>
+      <div class="history-label">Недавние</div>
+      <div class="chat-list" id="chatList"></div>
+      <div class="sidebar-bottom">
+        <button class="sidebar-action" id="secretChatBtn"><span class="action-icon"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><path d="M12 14v3"/></svg></span><span><strong>Секретный чат</strong><small>Не сохраняется в истории</small></span><span class="secret-dot"></span></button>
+        <button class="sidebar-action" id="settingsBtn"><span class="action-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1a1.7 1.7 0 0 1-2.4 2.4l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a1.7 1.7 0 0 1-3.4 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1a1.7 1.7 0 1 1-2.4-2.4l.1-.1a1.7 1.7 0 0 0-1.2-2.9H4a1.7 1.7 0 0 1 0-3.4h.2a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a1.7 1.7 0 1 1 2.4-2.4l.1.1a1.7 1.7 0 0 0 2.9-1.2V2a1.7 1.7 0 0 1 3.4 0v.2a1.7 1.7 0 0 0 2.9 1.2l.1-.1a1.7 1.7 0 1 1 2.4 2.4l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a1.7 1.7 0 0 1 0 3.4h-.2a1.7 1.7 0 0 0-1.2 2.9Z"/></svg></span><span><strong>Настройки</strong><small>API, тема и память</small></span></button>
+        <div class="sidebar-footnote">Ваши чаты хранятся локально</div>
+      </div>
+    </aside>
+
+    <div class="sidebar-scrim" id="sidebarScrim"></div>
+
+    <main class="main-panel">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-btn desktop-hidden" id="openSidebarBtn" aria-label="Открыть меню" title="Открыть меню"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+          <div class="current-chat-title" id="currentChatTitle">Новый чат</div>
+          <span class="secret-label hidden" id="secretLabel"><span></span> Секретный чат</span>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-btn" id="renameChatBtn" aria-label="Переименовать чат" title="Переименовать чат"><svg viewBox="0 0 24 24"><path d="m14 5 5 5M4 20l4.4-.9L19 8.5a2.1 2.1 0 0 0-3-3L5.4 16.1 4 20Z"/></svg></button>
+          <button class="icon-btn" id="topSettingsBtn" aria-label="Настройки" title="Настройки"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .4 1.9l.1.1-2.4 2.4-.1-.1a1.7 1.7 0 0 0-1.9-.4 1.7 1.7 0 0 0-1 1.6v.2h-3.4v-.2a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.4l-.1.1-2.4-2.4.1-.1a1.7 1.7 0 0 0 .4-1.9 1.7 1.7 0 0 0-1.6-1H4v-3.4h.2a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.4-1.9l-.1-.1 2.4-2.4.1.1a1.7 1.7 0 0 0 1.9.4 1.7 1.7 0 0 0 1-1.6V4h3.4v.2a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.4l.1-.1 2.4 2.4-.1.1a1.7 1.7 0 0 0-.4 1.9 1.7 1.7 0 0 0 1.6 1h.2v3.4h-.2a1.7 1.7 0 0 0-1.6 1Z"/></svg></button>
+        </div>
+      </header>
+
+      <section class="conversation" id="conversation" aria-live="polite">
+        <div class="welcome" id="welcome">
+          <div class="welcome-orb"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 5 39.4 24.6 59 32l-19.6 7.4L32 59l-7.4-19.6L5 32l19.6-7.4L32 5Z"/><circle cx="32" cy="32" r="6"/></svg></div>
+          <p class="eyebrow">ВАШ ИИ-ПОМОЩНИК</p>
+          <h1>С чего начнём?</h1>
+          <p class="welcome-copy">Задайте вопрос, поделитесь идеей или прикрепите файл для анализа.</p>
+          <div class="suggestion-grid">
+            <button class="suggestion-card" data-prompt="Помоги разобраться в сложной теме простыми словами."><span class="suggestion-icon violet">✧</span><span><strong>Объясни сложное</strong><small>Понятно и по шагам</small></span><span class="suggestion-arrow">↗</span></button>
+            <button class="suggestion-card" data-prompt="Помоги придумать несколько свежих идей для проекта."><span class="suggestion-icon amber">✎</span><span><strong>Найди идеи</strong><small>Мозговой штурм</small></span><span class="suggestion-arrow">↗</span></button>
+            <button class="suggestion-card" data-prompt="Помоги написать и улучшить текст. Сначала уточни задачу."><span class="suggestion-icon teal">⌘</span><span><strong>Создай текст</strong><small>Письмо, пост или план</small></span><span class="suggestion-arrow">↗</span></button>
+            <button class="suggestion-card" data-prompt="Помоги проанализировать задачу и предложи решение."><span class="suggestion-icon rose">⌁</span><span><strong>Реши задачу</strong><small>Разложи на этапы</small></span><span class="suggestion-arrow">↗</span></button>
+          </div>
+        </div>
+        <div class="messages hidden" id="messages"></div>
+        <div class="scroll-anchor" id="scrollAnchor"></div>
+      </section>
+
+      <footer class="composer-wrap">
+        <div class="secret-notice hidden" id="secretNotice"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span><strong>Секретный режим включён.</strong> Переписка не сохраняется приложением и исчезнет после выхода из чата.</span></div>
+        <div class="attachment-tray hidden" id="attachmentTray"></div>
+        <div class="composer" id="composer">
+          <textarea id="messageInput" rows="1" placeholder="Напишите сообщение..." aria-label="Сообщение"></textarea>
+          <div class="composer-toolbar">
+            <div class="composer-tools">
+              <button class="tool-btn" id="attachBtn" title="Прикрепить файл"><svg viewBox="0 0 24 24"><path d="m8 12.5 7.8-7.8a3.2 3.2 0 0 1 4.5 4.5L9.2 20.3a5 5 0 0 1-7.1-7.1L12.7 2.6"/></svg><span>Файл</span></button>
+              <input type="file" id="fileInput" multiple hidden>
+              <button class="tool-btn image-mode-btn" id="imageModeBtn" title="Создать изображение"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span>Изображение</span></button>
+              <span class="composer-hint">Enter — отправить · Shift+Enter — новая строка</span>
+            </div>
+            <div class="send-actions">
+              <button class="icon-btn stop-btn hidden" id="stopBtn" aria-label="Остановить генерацию" title="Остановить"><svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></button>
+              <button class="send-btn" id="sendBtn" disabled aria-label="Отправить сообщение"><svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+            </div>
+          </div>
+        </div>
+        <p class="disclaimer" id="composerDisclaimer">Astra может ошибаться. Проверяйте важную информацию.</p>
+      </footer>
+    </main>
+  </div>
+
+  <div class="modal-backdrop hidden" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <section class="settings-panel">
+      <header class="modal-header"><div><p class="eyebrow">ПЕРСОНАЛИЗАЦИЯ</p><h2 id="settingsTitle">Настройки Astra</h2></div><button class="icon-btn" id="closeSettingsBtn" aria-label="Закрыть настройки"><svg viewBox="0 0 24 24"><path d="m18 6-12 12M6 6l12 12"/></svg></button></header>
+      <nav class="settings-tabs" aria-label="Разделы настроек">
+        <button class="settings-tab active" data-tab="connection">Подключение</button>
+        <button class="settings-tab" data-tab="behavior">Поведение</button>
+        <button class="settings-tab" data-tab="appearance">Внешний вид</button>
+        <button class="settings-tab" data-tab="advanced">Дополнительно</button>
+      </nav>
+      <div class="settings-content">
+        <section class="settings-section" data-section="connection">
+          <div class="section-intro"><h3>Подключение к API</h3><p>Укажите адреса и параметры вашего провайдера. Astra не содержит встроенного API-ключа.</p></div>
+          <label class="field-label" for="apiBaseUrl">Основной URL API</label><input class="field-input" id="apiBaseUrl" type="url" placeholder="https://ваш-сервер.example">
+          <div class="field-help">Базовый адрес сервера. Не добавляйте путь метода, если он указан ниже.</div>
+          <div class="field-row"><div class="field grow"><label class="field-label" for="chatPath">Путь chat endpoint</label><input class="field-input" id="chatPath" type="text" placeholder="/v1/chat/completions"></div><div class="field grow"><label class="field-label" for="modelName">Модель</label><input class="field-input" id="modelName" type="text" placeholder="Введите название модели"></div></div>
+          <label class="field-label" for="apiKey">API-ключ</label><div class="input-with-action"><input class="field-input" id="apiKey" type="password" autocomplete="off" placeholder="Вставьте ваш API-ключ"><button class="inline-action" id="toggleKeyBtn" type="button">Показать</button></div>
+          <div class="check-row"><label class="check-label"><input type="checkbox" id="saveApiKey"><span>Сохранять ключ на этом устройстве</span></label><span class="field-help">По умолчанию ключ остаётся только в памяти вкладки.</span></div>
+          <div class="field-row"><div class="field grow"><label class="field-label" for="authHeader">Заголовок авторизации</label><input class="field-input" id="authHeader" type="text" placeholder="Authorization"></div><div class="field grow"><label class="field-label" for="authPrefix">Префикс ключа</label><input class="field-input" id="authPrefix" type="text" placeholder="Bearer"></div></div>
+          <div class="divider-line"></div>
+          <div class="section-intro"><h3>Генерация изображений</h3><p>Отдельный полный URL endpoint. Используется тот же API-ключ.</p></div>
+          <label class="field-label" for="imageUrl">URL генерации изображений</label><input class="field-input" id="imageUrl" type="url" placeholder="Вставьте полный URL endpoint">
+          <div class="field-row"><div class="field grow"><label class="field-label" for="imageModel">Модель изображений</label><input class="field-input" id="imageModel" type="text" placeholder="Например, название image-модели"></div><div class="field grow"><label class="field-label" for="imageSize">Размер</label><select class="field-input" id="imageSize"><option value="1024x1024">1024 × 1024</option><option value="1024x1536">1024 × 1536</option><option value="1536x1024">1536 × 1024</option><option value="auto">Автоматически</option></select></div></div>
+          <div class="field-help">Формат запроса и структура ответа у разных сервисов отличаются. Встроенный режим рассчитан на распространённый формат Images API; для другого формата настройте адаптер в app.js.</div>
+          <div class="divider-line"></div>
+          <div class="section-intro"><h3>Диагностика</h3><p>Подробности сетевых ошибок доступны здесь, а не в основном чате.</p></div>
+          <div class="diagnostic-box" id="diagnosticBox"><span class="status-dot"></span><span id="diagnosticText">Ошибок пока нет.</span></div>
+          <button class="text-button" id="clearDiagnosticBtn">Очистить диагностику</button>
+        </section>
+
+        <section class="settings-section hidden" data-section="behavior">
+          <div class="section-intro"><h3>Инструкции и память</h3><p>Эти данные добавляются к контексту запросов. Не включайте личные или секретные сведения.</p></div>
+          <label class="field-label" for="systemPrompt">Системный промт</label><textarea class="field-textarea" id="systemPrompt" rows="5" placeholder="Опишите, как должен отвечать ИИ..."></textarea>
+          <label class="field-label" for="memoryText">Память пользователя</label><textarea class="field-textarea" id="memoryText" rows="4" placeholder="Предпочтения, контекст и факты, которые стоит учитывать..."></textarea>
+          <label class="check-label toggle-row"><input type="checkbox" id="memoryEnabled"><span><strong>Передавать память в запросах</strong><small>Если выключено, текст памяти не отправляется API.</small></span></label>
+          <div class="divider-line"></div>
+          <div class="section-intro"><h3>Параметры генерации</h3><p>Поддержка и диапазоны зависят от выбранной модели.</p></div>
+          <div class="field-row"><div class="field grow"><label class="field-label" for="temperature">Temperature</label><input class="field-input" id="temperature" type="number" min="0" max="2" step="0.1"></div><div class="field grow"><label class="field-label" for="maxTokens">Max tokens</label><input class="field-input" id="maxTokens" type="number" min="1" max="200000" step="1"></div></div>
+          <div class="field-row"><div class="field grow"><label class="field-label" for="topP">Top P</label><input class="field-input" id="topP" type="number" min="0" max="1" step="0.05"></div><div class="field grow"><label class="field-label" for="frequencyPenalty">Frequency penalty</label><input class="field-input" id="frequencyPenalty" type="number" min="-2" max="2" step="0.1"></div><div class="field grow"><label class="field-label" for="presencePenalty">Presence penalty</label><input class="field-input" id="presencePenalty" type="number" min="-2" max="2" step="0.1"></div></div>
+          <div class="field-help">Если API не принимает какой-либо параметр, удалите его из шаблона запроса или отключите в адаптере.</div>
+        </section>
+
+        <section class="settings-section hidden" data-section="appearance">
+          <div class="section-intro"><h3>Тема интерфейса</h3><p>Выберите оформление Astra.</p></div>
+          <div class="theme-options">
+            <label class="theme-option"><input type="radio" name="theme" value="light"><span class="theme-preview theme-light"><i></i><b></b><b></b></span><strong>Светлая</strong></label>
+            <label class="theme-option"><input type="radio" name="theme" value="dark"><span class="theme-preview theme-dark"><i></i><b></b><b></b></span><strong>Тёмная</strong></label>
+            <label class="theme-option"><input type="radio" name="theme" value="system"><span class="theme-preview theme-system"><i></i><b></b><b></b></span><strong>Системная</strong></label>
+          </div>
+        </section>
+
+        <section class="settings-section hidden" data-section="advanced">
+          <div class="section-intro"><h3>Формат API</h3><p>Если ваш API не совместим с Chat Completions, настройте шаблон тела запроса и путь к ответу.</p></div>
+          <label class="field-label" for="requestMode">Режим запроса</label><select class="field-input" id="requestMode"><option value="openai">OpenAI-compatible Chat Completions</option><option value="custom">Пользовательский JSON-шаблон</option></select>
+          <div id="customRequestFields" class="hidden">
+            <label class="field-label" for="requestTemplate">JSON-шаблон тела запроса</label><textarea class="field-textarea code-input" id="requestTemplate" rows="9" spellcheck="false"></textarea>
+            <div class="field-help">Подстановки: {{model}}, {{messages}}, {{temperature}}, {{max_tokens}}, {{top_p}}, {{frequency_penalty}}, {{presence_penalty}}, {{file_ids}}. Поля-подстановки заменяются значениями соответствующего типа.</div>
+          </div>
+          <label class="field-label" for="responsePath">Путь к тексту ответа</label><input class="field-input" id="responsePath" type="text" placeholder="choices.0.message.content">
+          <div class="field-help">Путь через точку к полю в JSON-ответе. Для массива используйте индекс, например data.0.text.</div>
+          <div class="divider-line"></div>
+          <div class="section-intro"><h3>Формат генерации изображений</h3><p>Шаблон независим от чата. Подстановки: {{prompt}}, {{size}}, {{n}}, {{model}}.</p></div>
+          <label class="field-label" for="imageRequestTemplate">JSON-шаблон запроса изображений</label><textarea class="field-textarea code-input" id="imageRequestTemplate" rows="5" spellcheck="false"></textarea>
+          <label class="field-label" for="imageResponsePath">Путь к URL или base64 изображения</label><input class="field-input" id="imageResponsePath" type="text" placeholder="data.0.url">
+          <div class="field-help">Ожидается URL, data URL или base64-строка по заданному пути. Встроенный резервный разбор понимает data[0].url и data[0].b64_json.</div>
+          <div class="divider-line"></div>
+          <div class="section-intro"><h3>Файлы</h3><p>Обработка зависит от формата API. Встроенный адаптер умеет добавлять текстовые файлы к сообщению и передавать изображения как data URL, если модель поддерживает vision.</p></div>
+          <label class="field-label" for="fileUploadUrl">Необязательный URL загрузки файлов</label><input class="field-input" id="fileUploadUrl" type="url" placeholder="Полный URL endpoint загрузки">
+          <label class="field-label" for="fileIdPath">Путь к ID файла в ответе</label><input class="field-input" id="fileIdPath" type="text" placeholder="id">
+          <div class="field-help">Загрузка файлов — нестандартная функция. Если заполнить URL, Astra отправит файл как multipart/form-data, извлечёт ID по указанному пути и добавит список ID в {{file_ids}} пользовательского JSON-шаблона. Для этого используйте режим «Пользовательский JSON-шаблон» и настройте дальнейшую передачу ID по документации вашего сервиса. Без URL загрузки PDF/DOCX и другие бинарные форматы не передаются встроенным адаптером.</div>
+          <div class="divider-line"></div>
+          <div class="section-intro"><h3>Локальные данные</h3><p>История чатов и настройки хранятся в браузере на этом устройстве.</p></div>
+          <button class="danger-outline" id="clearHistoryBtn">Удалить всю историю чатов</button>
+          <button class="text-button" id="exportDataBtn">Экспортировать чаты и настройки</button>
+          <div class="field-help">Сохранённые данные не синхронизируются между устройствами. Секретные чаты и их сообщения не экспортируются.</div>
+        </section>
+      </div>
+      <footer class="modal-footer"><span class="save-status" id="saveStatus">Настройки сохраняются локально</span><div><button class="secondary-btn" id="cancelSettingsBtn">Закрыть</button><button class="primary-btn" id="saveSettingsBtn">Сохранить</button></div></footer>
+    </section>
+  </div>
+
+  <div class="toast-region" id="toastRegion" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
